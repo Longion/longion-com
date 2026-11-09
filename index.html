@@ -1,0 +1,1826 @@
+<html lang="zh-CN" data-trae-theme="dark"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智学云课堂 - 在线教育平台</title>
+<style>
+  /* ============ CSS 变量（主题色统一管理） ============ */
+  :root {
+    --primary: #3b82f6;          /* 主色蓝 */
+    --primary-dark: #2563eb;
+    --bg: #f4f6fb;               /* 浅灰蓝背景 */
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-sub: #6b7280;
+    --border: #e5e7eb;
+    --success: #22c55e;
+    --warning: #f97316;
+    --danger: #ef4444;
+    --shadow-sm: 0 1px 3px rgba(16, 24, 40, .06), 0 1px 2px rgba(16, 24, 40, .04);
+    --shadow-md: 0 8px 24px rgba(16, 24, 40, .12);
+    --radius-lg: 16px;
+    --radius-md: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+  button { font-family: inherit; cursor: pointer; }
+  a { color: var(--primary); text-decoration: none; }
+
+  /* ============ 一、顶部导航栏 ============ */
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+  .navbar-inner {
+    display: flex; align-items: center; gap: 24px;
+    height: 64px;
+  }
+  .logo-box { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-title { font-size: 18px; font-weight: 700; white-space: nowrap; }
+
+  /* 搜索框 */
+  .search-box { flex: 1; display: flex; max-width: 480px; margin: 0 auto; }
+  .search-input {
+    flex: 1; height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 2px 0 0 2px;
+    font-size: 14px; outline: none;
+    transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--primary); }
+  .search-btn {
+    height: 38px; padding: 0 20px;
+    background: var(--primary); color: #fff;
+    border: 1px solid var(--primary);
+    border-radius: 0 2px 2px 0;
+    font-size: 14px;
+  }
+  .search-btn:hover { background: var(--primary-dark); }
+
+  .nav-right { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+
+  /* 铃铛 + 角标 */
+  .bell-btn {
+    position: relative; background: none; border: none;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+  .bell-btn:hover { background: var(--bg); }
+  .bell-badge {
+    position: absolute; top: 0; right: 0;
+    min-width: 16px; height: 16px;
+    background: var(--danger); color: #fff;
+    font-size: 10px; line-height: 16px;
+    border-radius: 8px; text-align: center;
+    padding: 0 4px;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #bfdbfe, #dbeafe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 2px solid #fff;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ============ 二、轮播 Banner ============ */
+  .banner-section { padding: 24px 0 8px; }
+  .carousel {
+    position: relative; overflow: hidden;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .carousel-track {
+    display: flex;
+    transition: transform .5s ease;
+  }
+  .slide {
+    min-width: 100%;
+    height: 300px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; color: #fff;
+    padding: 0 60px;
+  }
+  .slide-1 { background: linear-gradient(135deg, #3b82f6, #22c55e); }
+  .slide-2 { background: linear-gradient(135deg, #a21caf, #ec4899); }
+  .slide-3 { background: linear-gradient(135deg, #f97316, #fb923c); }
+  .slide-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; text-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .slide-subtitle { font-size: 17px; opacity: .95; margin-bottom: 26px; }
+  .slide-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 16px;
+    padding: 12px 34px; font-size: 15px; font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0,0,0,.2);
+    transition: transform .2s, background .2s;
+  }
+  .slide-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+  /* 左右箭头 */
+  .carousel-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,.25); border: none;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+    z-index: 2;
+  }
+  .carousel-arrow:hover { background: rgba(255,255,255,.45); }
+  .arrow-prev { left: 16px; }
+  .arrow-next { right: 16px; }
+
+  /* 底部横条指示器 */
+  .carousel-dots {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 2;
+  }
+  .dot {
+    width: 24px; height: 4px; border: none; border-radius: 2px;
+    background: rgba(255,255,255,.45);
+    transition: all .3s;
+    padding: 0;
+  }
+  .dot.active { background: #fff; width: 36px; height: 5px; }
+
+  /* ============ 三、精选课程区 ============ */
+  .card-panel {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .section-header { margin-bottom: 18px; }
+  .section-title { font-size: 22px; font-weight: 700; }
+  .section-desc { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+
+  /* 分类 Tab */
+  .tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab-btn {
+    background: none; border: none;
+    font-size: 15px; color: var(--text-sub);
+    padding: 10px 2px;
+    position: relative;
+  }
+  .tab-btn.active { color: var(--primary); font-weight: 600; }
+  .tab-btn.active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px;
+    height: 2px; background: var(--primary); border-radius: 1px;
+  }
+
+  /* 课程卡片网格：桌面 3 列 / 平板 2 列 / 手机 1 列 */
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .course-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .course-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+  }
+  .course-cover {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .course-body { padding: 16px 18px 18px; }
+  .course-tag {
+    display: inline-block;
+    font-size: 12px; padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .course-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .course-meta { font-size: 13px; color: var(--text-sub); margin-bottom: 14px; }
+  .course-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .course-price { color: var(--danger); font-size: 18px; font-weight: 700; }
+  .course-price .yen { font-size: 13px; }
+  .learn-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 7px 16px; font-size: 13px;
+    transition: background .2s;
+  }
+  .learn-btn:hover { background: var(--primary-dark); }
+
+  /* 空状态 */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center; padding: 48px 0;
+    color: var(--text-sub); font-size: 14px;
+  }
+
+  /* ============ 四、我的学习记录（表格） ============ */
+  .table-wrapper { overflow-x: auto; }
+  .record-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+  .record-table th, .record-table td {
+    text-align: left;
+    padding: 14px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .record-table th { color: var(--text-sub); font-weight: 600; font-size: 13px; }
+  .record-table tbody tr { transition: background .15s; }
+  .record-table tbody tr:hover { background: #f8fafc; }
+
+  /* 进度条 */
+  .progress-cell { display: flex; align-items: center; gap: 8px; }
+  .progress-track {
+    flex: 1; min-width: 120px; height: 16px;
+    background: #e5e7eb; border-radius: 8px;
+    position: relative; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 8px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 6px;
+    font-size: 11px; color: #fff; font-weight: 600;
+    min-width: 34px;
+    transition: width .6s ease;
+  }
+  .fill-green { background: var(--success); }
+  .fill-blue { background: var(--primary); }
+  .fill-orange { background: var(--warning); }
+
+  /* 状态标签（描边） */
+  .status-tag {
+    display: inline-block;
+    font-size: 12px; padding: 2px 10px;
+    border-radius: 4px; border: 1px solid;
+    background: #fff;
+  }
+  .status-learning { color: var(--warning); border-color: var(--warning); }
+  .status-done { color: var(--success); border-color: var(--success); }
+
+  .continue-link { font-size: 13px; font-weight: 500; }
+  .continue-link:hover { text-decoration: underline; }
+
+  /* ============ 五、帮助中心（手风琴） ============ */
+  .accordion-item { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 12px; overflow: hidden; }
+  .accordion-header {
+    width: 100%; background: #fff; border: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px;
+    font-size: 15px; font-weight: 600; text-align: left;
+    transition: background .2s;
+  }
+  .accordion-header:hover { background: #f8fafc; }
+  .accordion-arrow { transition: transform .3s; flex-shrink: 0; color: var(--text-sub); }
+  .accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+  .accordion-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .accordion-content {
+    padding: 0 18px 16px;
+    font-size: 14px; color: var(--text-sub);
+  }
+
+  /* ============ 六、页脚 ============ */
+  .footer { background: #1f2937; color: #fff; margin-top: 32px; }
+  .footer-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    height: 72px;
+  }
+  .footer-text { font-size: 13px; color: #d1d5db; }
+  .feedback-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--primary); color: #fff;
+    border: none; border-radius: var(--radius-md);
+    padding: 9px 18px; font-size: 14px;
+    transition: background .2s;
+  }
+  .feedback-btn:hover { background: var(--primary-dark); }
+
+  /* ============ 响应式 ============ */
+  @media (max-width: 992px) {
+    .course-grid { grid-template-columns: repeat(2, 1fr); }
+    .slide-title { font-size: 28px; }
+  }
+  @media (max-width: 640px) {
+    .course-grid { grid-template-columns: 1fr; }
+    .navbar-inner { flex-wrap: wrap; height: auto; padding: 10px 0; gap: 12px; }
+    .search-box { order: 3; max-width: none; width: 100%; }
+    .slide { height: 240px; padding: 0 48px; }
+    .slide-title { font-size: 22px; }
+    .slide-subtitle { font-size: 14px; }
+    .card-panel { padding: 20px 16px; }
+  }
+</style>
+<style data-trae-edit-ui="true" id="trae-previewer-tools-styles">:root {
+  --trae-layer-image-download: 89990;
+  --trae-layer-browser-inspect-overlay: 90000;
+  --trae-layer-browser-inspect-highlight: 90010;
+  --trae-layer-browser-inspect-action: 90020;
+  --trae-layer-text-selection-action: 90030;
+  --trae-layer-edit-tooltip: 100095;
+}
+:root,
+[data-trae-theme='dark'] {
+  --trae-bg-base-default: #171717;
+  --trae-bg-menu: #222427;
+  --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04);
+  --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08);
+  --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12);
+  --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16);
+  --trae-bg-invert: #f5f9fe;
+  --trae-bg-invert-hover: #e8ecf0;
+  --trae-bg-invert-active: #dce0e4;
+  --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35);
+  --bg-bg-brand-popup: rgba(106, 111, 255, 0.15);
+  --trae-border-l1: #e0e2f217;
+  --trae-border-l2: rgba(255, 255, 255, 0.12);
+  --trae-border-l3: rgba(255, 255, 255, 0.08);
+  --trae-border-neutral-l3: rgba(229, 229, 229, 0.20);
+  --trae-border-brand: #6a6fff;
+  --trae-text-default: #f5f9fe;
+  --trae-text-default-hover: #f5f9fe;
+  --trae-text-default-active: #f5f9fe;
+  --trae-text-secondary: rgba(245, 249, 254, 0.5);
+  --trae-text-tertiary: rgba(245, 249, 254, 0.4);
+  --trae-text-disabled: #666b75;
+  --trae-text-onaccent: #222427;
+  --trae-icon-default: #f5f9fe;
+  --trae-icon-secondary: rgba(245, 249, 254, 0.5);
+  --trae-icon-brand: #6a6fff;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #222427;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #387bff;
+  --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --trae-status-success-default: #33c192;
+  --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --trae-status-error-default: #f65a5a;
+  --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(106, 111, 255, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+[data-trae-theme='light'] {
+  --trae-bg-base-default: #fafafa;
+  --trae-bg-menu: #ffffff;
+  --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04);
+  --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06);
+  --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08);
+  --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12);
+  --trae-bg-invert: #1f2328;
+  --trae-bg-invert-hover: #32383f;
+  --trae-bg-invert-active: #444d56;
+  --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22);
+  --bg-bg-brand-popup: rgba(170, 183, 255, 0.36);
+  --trae-border-l1: rgba(0, 0, 0, 0.1);
+  --trae-border-l2: rgba(0, 0, 0, 0.12);
+  --trae-border-l3: rgba(0, 0, 0, 0.08);
+  --trae-border-neutral-l3: rgba(115, 115, 115, 0.36);
+  --trae-border-brand: #4b3fe3;
+  --trae-text-default: #1f2328;
+  --trae-text-default-hover: #111214;
+  --trae-text-default-active: #111214;
+  --trae-text-secondary: rgba(31, 35, 40, 0.5);
+  --trae-text-tertiary: rgba(31, 35, 40, 0.4);
+  --trae-text-disabled: #a1a1a1;
+  --trae-text-onaccent: #ffffff;
+  --trae-icon-default: #1f2328;
+  --trae-icon-secondary: rgba(31, 35, 40, 0.5);
+  --trae-icon-brand: #4b3fe3;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #ffffff;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #2f74ff;
+  --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12);
+  --trae-status-success-default: #15a877;
+  --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12);
+  --trae-status-error-default: #e8463a;
+  --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(75, 63, 227, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+@keyframes trae-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trae-edit-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes trae-edit-bar-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes trae-edit-panel-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body *:not([data-trae-edit-ui]):not([data-trae-edit-ui] *) {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel),
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * {
+  pointer-events: none !important;
+}
+
+.trae-browser-inspect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--trae-layer-browser-inspect-overlay);
+  pointer-events: auto;
+  background: transparent;
+}
+
+.trae-browser-inspect-highlight-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--trae-layer-browser-inspect-highlight);
+  display: none;
+}
+
+.trae-browser-inspect-highlight-tag {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 18px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: var(--trae-status-success-default);
+  color: var(--trae-text-onaccent);
+  font-size: 12px;
+  font-weight: 400;
+  display: none;
+  align-items: center;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-highlight-box-show {
+  display: flex;
+}
+
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show {
+  display: none;
+}
+
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show {
+  display: block !important;
+}
+
+.trae-browser-inspect-select-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-select-highlight-box {
+  background: transparent !important;
+}
+
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag {
+  background-color: var(--trae-status-success-default);
+}
+
+.trae-add-to-chat-card {
+  display: block;
+  overflow: hidden;
+  background: var(--trae-bg-menu);
+  border: 1px solid var(--trae-border-l1);
+  border-radius: 8px;
+  box-shadow: var(--trae-floating-shadow);
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trae-add-to-chat-content {
+  position: relative;
+  width: max-content;
+}
+
+.trae-fade-exit {
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.trae-fade-enter {
+  opacity: 1;
+  transition: opacity 0.2s ease-in;
+}
+
+.trae-buttons-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: transparent;
+}
+
+.trae-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.trae-action-button:hover {
+  background: var(--trae-bg-overlay-l2);
+}
+
+.trae-action-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-action-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-action-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-icon-default);
+  flex-shrink: 0;
+}
+
+.trae-action-button-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+}
+
+.trae-edit-toolbar-button-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, #4b3fe3) !important;
+  font-weight: bold !important;
+}
+
+.trae-edit-toolbar-button-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:hover,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:hover,
+.trae-edit-toolbar button[data-action='font-decrease']:hover,
+.trae-edit-toolbar button[data-action='font-increase']:hover,
+.trae-edit-toolbar button[data-action^='align-']:hover {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:active,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:active,
+.trae-edit-toolbar button[data-action='font-decrease']:active,
+.trae-edit-toolbar button[data-action='font-increase']:active,
+.trae-edit-toolbar button[data-action^='align-']:active {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important;
+}
+
+.trae-comment-input {
+  background: transparent;
+  color: var(--trae-text-default);
+  caret-color: var(--trae-text-default);
+}
+
+.trae-comment-input::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-point-edit-bar,
+.trae-point-comment-input-bar,
+.trae-comment-only-panel {
+  transform-origin: top center;
+  will-change: opacity, transform;
+}
+
+.trae-edit-panel:not(.trae-edit-panel-leave) {
+  pointer-events: auto !important;
+}
+
+.trae-edit-bar-enter {
+  animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both;
+}
+
+.trae-edit-bar-leave {
+  pointer-events: none;
+  animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel-leave {
+  pointer-events: none;
+  animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel [data-trae-tooltip] {
+  position: relative;
+}
+
+.trae-edit-panel [data-trae-tooltip]::after {
+  content: attr(data-trae-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: var(--trae-layer-edit-tooltip);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  color: var(--trae-text-onaccent, var(--text-text-onaccent));
+  box-shadow: var(--trae-floating-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.039px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(-50%);
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: var(--trae-layer-edit-tooltip);
+  width: 8px;
+  height: 4px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]:hover::after,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::after,
+.trae-edit-panel [data-trae-tooltip]:hover::before,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.trae-comment-btn {
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-comment-btn:disabled {
+  cursor: not-allowed;
+}
+
+.trae-comment-btn:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-comment-btn-primary {
+  background: var(--trae-bg-invert);
+  color: var(--trae-text-onaccent);
+}
+
+.trae-comment-btn-primary:hover:not(:disabled) {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-comment-btn-primary:active:not(:disabled) {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-comment-btn-primary:disabled {
+  background: var(--trae-bg-invert-disabled);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-secondary {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-secondary:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-comment-btn-secondary:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l4);
+}
+
+.trae-comment-btn-secondary:disabled {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-text {
+  background: transparent;
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-text:hover:not(:disabled) {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1));
+  color: var(--trae-text-default-hover);
+}
+
+.trae-comment-btn-text:active:not(:disabled) {
+  border-radius: 8px;
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default-active);
+}
+
+.trae-comment-btn-text:disabled {
+  background: transparent;
+  color: var(--trae-text-disabled);
+}
+
+.trae-marking-btn {
+  justify-content: center;
+}
+
+.trae-marking-btn:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l1) !important;
+}
+
+.trae-marking-btn-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l2) !important;
+}
+
+.trae-marking-btn:disabled {
+  color: var(--trae-text-disabled) !important;
+  cursor: not-allowed !important;
+}
+
+.trae-action-button-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--trae-icon-secondary);
+  flex-shrink: 0;
+}
+
+.trae-shortcut-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.trae-shortcut-key {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 12px;
+  color: var(--trae-icon-secondary);
+}
+
+.trae-add-to-chat-divider {
+  width: 2px;
+  height: 12px;
+  padding: 0 6px;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: var(--trae-border-l2);
+  flex-shrink: 0;
+}
+
+.trae-editor-view {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  padding: 8px;
+  background: transparent;
+}
+
+.trae-editor-text-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: var(--trae-bg-overlay-l1);
+  border: 1px solid var(--trae-border-l3);
+  border-radius: 4px;
+  gap: 8px;
+}
+
+.trae-editor-textarea {
+  flex: 1;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--trae-text-default);
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  max-height: 140px;
+}
+
+.trae-editor-textarea::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-editor-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out,
+    margin-top 0.2s ease-out;
+}
+
+.trae-editor-action-bar-visible {
+  max-height: 32px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+.trae-editor-cancel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 4px;
+  background: var(--trae-bg-overlay-l2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-cancel-button:hover {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-cancel-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--trae-bg-invert);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-submit-button:hover {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-editor-submit-button:active {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-editor-submit-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-submit-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-onaccent);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: var(--trae-icon-onaccent);
+  flex-shrink: 0;
+}
+
+.trae-success-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  white-space: nowrap;
+}
+
+.trae-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-status-success);
+  flex-shrink: 0;
+}
+
+.trae-success-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--trae-text-default);
+  user-select: none;
+}
+</style><style data-trae-pptx-captured-css="true">:root { --primary: #3b82f6; --primary-dark: #2563eb; --bg: #f4f6fb; --card-bg: #ffffff; --text-main: #1f2937; --text-sub: #6b7280; --border: #e5e7eb; --success: #22c55e; --warning: #f97316; --danger: #ef4444; --shadow-sm: 0 1px 3px rgba(16, 24, 40, .06), 0 1px 2px rgba(16, 24, 40, .04); --shadow-md: 0 8px 24px rgba(16, 24, 40, .12); --radius-lg: 16px; --radius-md: 8px; }
+* { margin: 0px; padding: 0px; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.6; }
+.container { max-width: 1200px; margin: 0px auto; padding: 0px 20px; }
+button { font-family: inherit; cursor: pointer; }
+a { color: var(--primary); text-decoration: none; }
+.navbar { position: sticky; top: 0px; z-index: 100; background: rgb(255, 255, 255); border-bottom: 1px solid var(--border); }
+.navbar-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
+.logo-box { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--primary); display: flex; align-items: center; justify-content: center; }
+.logo-title { font-size: 18px; font-weight: 700; white-space: nowrap; }
+.search-box { flex: 1 1 0%; display: flex; max-width: 480px; margin: 0px auto; }
+.search-input { flex: 1 1 0%; height: 38px; padding: 0px 14px; border-top-color: ; border-top-style: ; border-top-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-right: none; border-radius: 2px 0px 0px 2px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(--primary); }
+.search-btn { height: 38px; padding: 0px 20px; background: var(--primary); color: rgb(255, 255, 255); border: 1px solid var(--primary); border-radius: 0px 2px 2px 0px; font-size: 14px; }
+.search-btn:hover { background: var(--primary-dark); }
+.nav-right { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.bell-btn { position: relative; background: none; border: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.bell-btn:hover { background: var(--bg); }
+.bell-badge { position: absolute; top: 0px; right: 0px; min-width: 16px; height: 16px; background: var(--danger); color: rgb(255, 255, 255); font-size: 10px; line-height: 16px; border-radius: 8px; text-align: center; padding: 0px 4px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, rgb(191, 219, 254), rgb(219, 234, 254)); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgb(255, 255, 255); box-shadow: var(--shadow-sm); }
+.banner-section { padding: 24px 0px 8px; }
+.carousel { position: relative; overflow: hidden; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.carousel-track { display: flex; transition: transform 0.5s; }
+.slide { min-width: 100%; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: rgb(255, 255, 255); padding: 0px 60px; }
+.slide-1 { background: linear-gradient(135deg, rgb(59, 130, 246), rgb(34, 197, 94)); }
+.slide-2 { background: linear-gradient(135deg, rgb(162, 28, 175), rgb(236, 72, 153)); }
+.slide-3 { background: linear-gradient(135deg, rgb(249, 115, 22), rgb(251, 146, 60)); }
+.slide-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; text-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px; }
+.slide-subtitle { font-size: 17px; opacity: 0.95; margin-bottom: 26px; }
+.slide-btn { background: var(--primary); color: rgb(255, 255, 255); border: none; border-radius: 16px; padding: 12px 34px; font-size: 15px; font-weight: 600; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 14px; transition: transform 0.2s, background 0.2s; }
+.slide-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); border: none; color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 2; }
+.carousel-arrow:hover { background: rgba(255, 255, 255, 0.45); }
+.arrow-prev { left: 16px; }
+.arrow-next { right: 16px; }
+.carousel-dots { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2; }
+.dot { width: 24px; height: 4px; border: none; border-radius: 2px; background: rgba(255, 255, 255, 0.45); transition: 0.3s; padding: 0px; }
+.dot.active { background: rgb(255, 255, 255); width: 36px; height: 5px; }
+.card-panel { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px; margin: 24px 0px; }
+.section-header { margin-bottom: 18px; }
+.section-title { font-size: 22px; font-weight: 700; }
+.section-desc { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+.tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { background: none; border: none; font-size: 15px; color: var(--text-sub); padding: 10px 2px; position: relative; }
+.tab-btn.active { color: var(--primary); font-weight: 600; }
+.tab-btn.active::after { content: ""; position: absolute; left: 0px; right: 0px; bottom: -1px; height: 2px; background: var(--primary); border-radius: 1px; }
+.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.course-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: transform 0.25s, box-shadow 0.25s; }
+.course-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+.course-cover { height: 180px; display: flex; align-items: center; justify-content: center; }
+.course-body { padding: 16px 18px 18px; }
+.course-tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 10px; margin-bottom: 10px; }
+.course-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.course-meta { font-size: 13px; color: var(--text-sub); margin-bottom: 14px; }
+.course-footer { display: flex; align-items: center; justify-content: space-between; }
+.course-price { color: var(--danger); font-size: 18px; font-weight: 700; }
+.course-price .yen { font-size: 13px; }
+.learn-btn { background: var(--primary); color: rgb(255, 255, 255); border: none; border-radius: 8px; padding: 7px 16px; font-size: 13px; transition: background 0.2s; }
+.learn-btn:hover { background: var(--primary-dark); }
+.empty-state { grid-column: 1 / -1; text-align: center; padding: 48px 0px; color: var(--text-sub); font-size: 14px; }
+.table-wrapper { overflow-x: auto; }
+.record-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+.record-table th, .record-table td { text-align: left; padding: 14px 12px; font-size: 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.record-table th { color: var(--text-sub); font-weight: 600; font-size: 13px; }
+.record-table tbody tr { transition: background 0.15s; }
+.record-table tbody tr:hover { background: rgb(248, 250, 252); }
+.progress-cell { display: flex; align-items: center; gap: 8px; }
+.progress-track { flex: 1 1 0%; min-width: 120px; height: 16px; background: rgb(229, 231, 235); border-radius: 8px; position: relative; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 11px; color: rgb(255, 255, 255); font-weight: 600; min-width: 34px; transition: width 0.6s; }
+.fill-green { background: var(--success); }
+.fill-blue { background: var(--primary); }
+.fill-orange { background: var(--warning); }
+.status-tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 4px; border: 1px solid; background: rgb(255, 255, 255); }
+.status-learning { color: var(--warning); border-color: var(--warning); }
+.status-done { color: var(--success); border-color: var(--success); }
+.continue-link { font-size: 13px; font-weight: 500; }
+.continue-link:hover { text-decoration: underline; }
+.accordion-item { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 12px; overflow: hidden; }
+.accordion-header { width: 100%; background: rgb(255, 255, 255); border: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; font-size: 15px; font-weight: 600; text-align: left; transition: background 0.2s; }
+.accordion-header:hover { background: rgb(248, 250, 252); }
+.accordion-arrow { transition: transform 0.3s; flex-shrink: 0; color: var(--text-sub); }
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+.accordion-body { max-height: 0px; overflow: hidden; transition: max-height 0.3s; }
+.accordion-content { padding: 0px 18px 16px; font-size: 14px; color: var(--text-sub); }
+.footer { background: rgb(31, 41, 55); color: rgb(255, 255, 255); margin-top: 32px; }
+.footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; height: 72px; }
+.footer-text { font-size: 13px; color: rgb(209, 213, 219); }
+.feedback-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: rgb(255, 255, 255); border: none; border-radius: var(--radius-md); padding: 9px 18px; font-size: 14px; transition: background 0.2s; }
+.feedback-btn:hover { background: var(--primary-dark); }
+@media (max-width: 992px) {
+  .course-grid { grid-template-columns: repeat(2, 1fr); }
+  .slide-title { font-size: 28px; }
+}
+@media (max-width: 640px) {
+  .course-grid { grid-template-columns: 1fr; }
+  .navbar-inner { flex-wrap: wrap; height: auto; padding: 10px 0px; gap: 12px; }
+  .search-box { order: 3; max-width: none; width: 100%; }
+  .slide { height: 240px; padding: 0px 48px; }
+  .slide-title { font-size: 22px; }
+  .slide-subtitle { font-size: 14px; }
+  .card-panel { padding: 20px 16px; }
+}
+:root { --trae-layer-image-download: 89990; --trae-layer-browser-inspect-overlay: 90000; --trae-layer-browser-inspect-highlight: 90010; --trae-layer-browser-inspect-action: 90020; --trae-layer-text-selection-action: 90030; --trae-layer-edit-tooltip: 100095; }
+:root, [data-trae-theme="dark"] { --trae-bg-base-default: #171717; --trae-bg-menu: #222427; --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04); --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08); --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12); --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16); --trae-bg-invert: #f5f9fe; --trae-bg-invert-hover: #e8ecf0; --trae-bg-invert-active: #dce0e4; --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35); --bg-bg-brand-popup: rgba(106, 111, 255, 0.15); --trae-border-l1: #e0e2f217; --trae-border-l2: rgba(255, 255, 255, 0.12); --trae-border-l3: rgba(255, 255, 255, 0.08); --trae-border-neutral-l3: rgba(229, 229, 229, 0.20); --trae-border-brand: #6a6fff; --trae-text-default: #f5f9fe; --trae-text-default-hover: #f5f9fe; --trae-text-default-active: #f5f9fe; --trae-text-secondary: rgba(245, 249, 254, 0.5); --trae-text-tertiary: rgba(245, 249, 254, 0.4); --trae-text-disabled: #666b75; --trae-text-onaccent: #222427; --trae-icon-default: #f5f9fe; --trae-icon-secondary: rgba(245, 249, 254, 0.5); --trae-icon-brand: #6a6fff; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #222427; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #387bff; --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18); --trae-status-success-default: #33c192; --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18); --trae-status-error-default: #f65a5a; --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32); --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16); --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(106, 111, 255, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+[data-trae-theme="light"] { --trae-bg-base-default: #fafafa; --trae-bg-menu: #ffffff; --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04); --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06); --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08); --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12); --trae-bg-invert: #1f2328; --trae-bg-invert-hover: #32383f; --trae-bg-invert-active: #444d56; --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22); --bg-bg-brand-popup: rgba(170, 183, 255, 0.36); --trae-border-l1: rgba(0, 0, 0, 0.1); --trae-border-l2: rgba(0, 0, 0, 0.12); --trae-border-l3: rgba(0, 0, 0, 0.08); --trae-border-neutral-l3: rgba(115, 115, 115, 0.36); --trae-border-brand: #4b3fe3; --trae-text-default: #1f2328; --trae-text-default-hover: #111214; --trae-text-default-active: #111214; --trae-text-secondary: rgba(31, 35, 40, 0.5); --trae-text-tertiary: rgba(31, 35, 40, 0.4); --trae-text-disabled: #a1a1a1; --trae-text-onaccent: #ffffff; --trae-icon-default: #1f2328; --trae-icon-secondary: rgba(31, 35, 40, 0.5); --trae-icon-brand: #4b3fe3; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #ffffff; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #2f74ff; --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12); --trae-status-success-default: #15a877; --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12); --trae-status-error-default: #e8463a; --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18); --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06); --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(75, 63, 227, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+@keyframes trae-spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes trae-edit-bar-enter { 
+  0% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+@keyframes trae-edit-bar-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+@keyframes trae-edit-panel-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body :not([data-trae-edit-ui]):not([data-trae-edit-ui] *) { transition: none !important; animation-play-state: paused !important; }
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel), .trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * { pointer-events: none !important; }
+.trae-browser-inspect-overlay { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: var(--trae-layer-browser-inspect-overlay); pointer-events: auto; background: transparent; }
+.trae-browser-inspect-highlight-box { position: absolute; top: 0px; left: 0px; z-index: var(--trae-layer-browser-inspect-highlight); display: none; }
+.trae-browser-inspect-highlight-tag { position: absolute; left: 0px; top: 0px; height: 18px; padding: 0px 6px; box-sizing: border-box; border-radius: 4px; background-color: var(--trae-status-success-default); color: var(--trae-text-onaccent); font-size: 12px; font-weight: 400; display: none; align-items: center; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-highlight-box-show { display: flex; }
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show { display: none; }
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show { display: block !important; }
+.trae-browser-inspect-select-button { position: absolute; top: 0px; left: 0px; display: none; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-select-highlight-box { background: transparent !important; }
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag { background-color: var(--trae-status-success-default); }
+.trae-add-to-chat-card { display: block; overflow: hidden; background: var(--trae-bg-menu); border: 1px solid var(--trae-border-l1); border-radius: 8px; box-shadow: var(--trae-floating-shadow); transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.trae-add-to-chat-content { position: relative; width: max-content; }
+.trae-fade-exit { opacity: 0; transition: opacity 0.15s ease-out; }
+.trae-fade-enter { opacity: 1; transition: opacity 0.2s ease-in; }
+.trae-buttons-view { display: flex; align-items: center; gap: 6px; padding: 4px; background: transparent; }
+.trae-action-button { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; border-radius: 4px; cursor: pointer; transform: none !important; transition: none !important; animation: auto ease 0s 1 normal none running none !important; }
+.trae-action-button:hover { background: var(--trae-bg-overlay-l2); }
+.trae-action-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-action-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-action-button-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-icon-default); flex-shrink: 0; }
+.trae-action-button-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; }
+.trae-edit-toolbar-button-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, #4b3fe3) !important; font-weight: bold !important; }
+.trae-edit-toolbar-button-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:hover, .trae-edit-toolbar button[data-action="text-align-dropdown"]:hover, .trae-edit-toolbar button[data-action="font-decrease"]:hover, .trae-edit-toolbar button[data-action="font-increase"]:hover, .trae-edit-toolbar button[data-action^="align-"]:hover { border-radius: 8px; background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:active, .trae-edit-toolbar button[data-action="text-align-dropdown"]:active, .trae-edit-toolbar button[data-action="font-decrease"]:active, .trae-edit-toolbar button[data-action="font-increase"]:active, .trae-edit-toolbar button[data-action^="align-"]:active { border-radius: 8px; background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important; }
+.trae-comment-input { background: transparent; color: var(--trae-text-default); caret-color: var(--trae-text-default); }
+.trae-comment-input::placeholder { color: var(--trae-text-tertiary); }
+.trae-point-edit-bar, .trae-point-comment-input-bar, .trae-comment-only-panel { transform-origin: center top; will-change: opacity, transform; }
+.trae-edit-panel:not(.trae-edit-panel-leave) { pointer-events: auto !important; }
+.trae-edit-bar-enter { animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both; }
+.trae-edit-bar-leave { pointer-events: none; animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel-leave { pointer-events: none; animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel [data-trae-tooltip] { position: relative; }
+.trae-edit-panel [data-trae-tooltip]::after { content: attr(data-trae-tooltip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: var(--trae-layer-edit-tooltip); padding: 6px 10px; border-radius: 6px; background: var(--trae-bg-invert, var(--bg-bg-invert)); color: var(--trae-text-onaccent, var(--text-text-onaccent)); box-shadow: var(--trae-floating-shadow); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.039px; white-space: nowrap; pointer-events: none; box-sizing: border-box; opacity: 0; transform: translateX(-50%); visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]::before { content: ""; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: var(--trae-layer-edit-tooltip); width: 8px; height: 4px; background: var(--trae-bg-invert, var(--bg-bg-invert)); clip-path: polygon(0px 0px, 100% 0px, 50% 100%); transform: translateX(-50%); pointer-events: none; opacity: 0; visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]:hover::after, .trae-edit-panel [data-trae-tooltip]:focus-visible::after, .trae-edit-panel [data-trae-tooltip]:hover::before, .trae-edit-panel [data-trae-tooltip]:focus-visible::before { opacity: 1; visibility: visible; }
+.trae-comment-btn { justify-content: center; cursor: pointer; transition: background-color 0.15s; }
+.trae-comment-btn:disabled { cursor: not-allowed; }
+.trae-comment-btn:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-comment-btn-primary { background: var(--trae-bg-invert); color: var(--trae-text-onaccent); }
+.trae-comment-btn-primary:hover:not(:disabled) { background: var(--trae-bg-invert-hover); }
+.trae-comment-btn-primary:active:not(:disabled) { background: var(--trae-bg-invert-active); }
+.trae-comment-btn-primary:disabled { background: var(--trae-bg-invert-disabled); color: var(--trae-text-disabled); }
+.trae-comment-btn-secondary { background: var(--trae-bg-overlay-l2); color: var(--trae-text-default); }
+.trae-comment-btn-secondary:hover:not(:disabled) { background: var(--trae-bg-overlay-l3); }
+.trae-comment-btn-secondary:active:not(:disabled) { background: var(--trae-bg-overlay-l4); }
+.trae-comment-btn-secondary:disabled { background: var(--trae-bg-overlay-l2); color: var(--trae-text-disabled); }
+.trae-comment-btn-text { background: transparent; color: var(--trae-text-default); }
+.trae-comment-btn-text:hover:not(:disabled) { border-radius: 8px; background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1)); color: var(--trae-text-default-hover); }
+.trae-comment-btn-text:active:not(:disabled) { border-radius: 8px; background: var(--trae-bg-overlay-l2); color: var(--trae-text-default-active); }
+.trae-comment-btn-text:disabled { background: transparent; color: var(--trae-text-disabled); }
+.trae-marking-btn { justify-content: center; }
+.trae-marking-btn:hover:not(:disabled) { background: var(--trae-bg-overlay-l1) !important; }
+.trae-marking-btn-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn:active:not(:disabled) { background: var(--trae-bg-overlay-l2) !important; }
+.trae-marking-btn:disabled { color: var(--trae-text-disabled) !important; cursor: not-allowed !important; }
+.trae-action-button-shortcut { display: flex; align-items: center; gap: 2px; color: var(--trae-icon-secondary); flex-shrink: 0; }
+.trae-shortcut-container { display: flex; align-items: center; gap: 2px; }
+.trae-shortcut-key { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 12px; color: var(--trae-icon-secondary); }
+.trae-add-to-chat-divider { width: 2px; height: 12px; padding: 0px 6px; box-sizing: content-box; background-clip: content-box; background-color: var(--trae-border-l2); flex-shrink: 0; }
+.trae-editor-view { display: flex; flex-direction: column; width: 320px; padding: 8px; background: transparent; }
+.trae-editor-text-container { display: flex; align-items: center; padding: 8px; background: var(--trae-bg-overlay-l1); border: 1px solid var(--trae-border-l3); border-radius: 4px; gap: 8px; }
+.trae-editor-textarea { flex: 1 1 0%; padding: 0px 2px; border: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; line-height: 20px; color: var(--trae-text-default); resize: none; outline: none; overflow-y: auto; max-height: 140px; }
+.trae-editor-textarea::placeholder { color: var(--trae-text-tertiary); }
+.trae-editor-action-bar { display: flex; align-items: center; justify-content: flex-end; gap: 4px; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.2s ease-out, opacity 0.2s ease-out, margin-top 0.2s ease-out; }
+.trae-editor-action-bar-visible { max-height: 32px; opacity: 1; margin-top: 8px; }
+.trae-editor-cancel-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 4px; background: var(--trae-bg-overlay-l2); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-cancel-button:hover { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-cancel-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 8px; background: var(--trae-bg-invert); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-submit-button:hover { background: var(--trae-bg-invert-hover); }
+.trae-editor-submit-button:active { background: var(--trae-bg-invert-active); }
+.trae-editor-submit-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-submit-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-onaccent); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-icon { display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; color: var(--trae-icon-onaccent); flex-shrink: 0; }
+.trae-success-view { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0px 12px; height: 32px; white-space: nowrap; }
+.trae-success-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-status-success); flex-shrink: 0; }
+.trae-success-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--trae-text-default); user-select: none; }</style></head>
+<body>
+
+<!-- ============ 一、顶部导航栏 ============ -->
+<header class="navbar">
+  <div class="container navbar-inner">
+    <!-- 左侧 Logo -->
+    <div class="logo-box">
+      <div class="logo-icon" aria-hidden="true">
+        <!-- 书本 SVG 图标 -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </div>
+      <span class="logo-title">智学云课堂</span>
+    </div>
+
+    <!-- 中间搜索框 -->
+    <div class="search-box" role="search">
+      <input id="searchInput" class="search-input" type="search" placeholder="搜索课程、讲师、分类…" aria-label="搜索课程、讲师、分类">
+      <button id="searchBtn" class="search-btn" type="button">搜索</button>
+    </div>
+
+    <!-- 右侧：铃铛 + 头像 -->
+    <div class="nav-right">
+      <button class="bell-btn" aria-label="通知，6 条未读">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="bell-badge" aria-hidden="true">6</span>
+      </button>
+      <div class="avatar" role="img" aria-label="用户头像">🐼</div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ============ 二、轮播 Banner ============ -->
+  <section class="banner-section" aria-label="推荐活动轮播">
+    <div class="carousel" id="carousel">
+      <div class="carousel-track" id="carouselTrack" style="transform: translateX(-200%);">
+        <div class="slide slide-1">
+          <h2 class="slide-title">前端进阶训练营 2026</h2>
+          <p class="slide-subtitle">从工程化到性能优化，全面实战</p>
+          <button class="slide-btn" type="button">立即查看</button>
+        </div>
+        <div class="slide slide-2">
+          <h2 class="slide-title">AI Coding 实战季</h2>
+          <p class="slide-subtitle">掌握 LLM 辅助开发，提升 10 倍效率</p>
+          <button class="slide-btn" type="button">立即查看</button>
+        </div>
+        <div class="slide slide-3">
+          <h2 class="slide-title">全栈进阶计划</h2>
+          <p class="slide-subtitle">前端 + Node + 云原生，一站式成长</p>
+          <button class="slide-btn" type="button">立即查看</button>
+        </div>
+      </div>
+
+      <!-- 左右箭头 -->
+      <button class="carousel-arrow arrow-prev" id="prevBtn" aria-label="上一张">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="carousel-arrow arrow-next" id="nextBtn" aria-label="下一张">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <!-- 指示器（JS 渲染） -->
+      <div class="carousel-dots" id="carouselDots" role="tablist" aria-label="轮播指示器"><button class="dot" aria-label="切换到第 1 张"></button><button class="dot" aria-label="切换到第 2 张"></button><button class="dot active" aria-label="切换到第 3 张"></button><button class="dot active" aria-label="切换到第 1 张"></button><button class="dot" aria-label="切换到第 2 张"></button><button class="dot" aria-label="切换到第 3 张"></button></div>
+    </div>
+  </section>
+
+  <!-- ============ 三、精选课程区 ============ -->
+  <section class="card-panel" aria-labelledby="courseTitle">
+    <div class="section-header">
+      <h2 class="section-title" id="courseTitle">精选课程</h2>
+      <p class="section-desc">跟随行业一线工程师学习</p>
+    </div>
+
+    <!-- 分类 Tab -->
+    <div class="tabs" id="tabs" role="tablist" aria-label="课程分类">
+      <button class="tab-btn active" data-category="全部" role="tab" aria-selected="true">全部</button>
+      <button class="tab-btn" data-category="前端" role="tab" aria-selected="false">前端</button>
+      <button class="tab-btn" data-category="AI Coding" role="tab" aria-selected="false">AI Coding</button>
+    </div>
+
+    <!-- 课程卡片网格（JS 渲染） -->
+    <div class="course-grid" id="courseGrid">
+    <article class="course-card">
+      <div class="course-cover" style="background:#3b82f6"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#eff6ff;color:#3b82f6">前端</span>
+        <h3 class="course-name">Vue3 组件库设计与实现</h3>
+        <p class="course-meta">讲师：李伟 · 24 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 299</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  
+    <article class="course-card">
+      <div class="course-cover" style="background:#84cc16"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#f7fee7;color:#65a30d">前端</span>
+        <h3 class="course-name">React 18 并发渲染原理</h3>
+        <p class="course-meta">讲师：王芳 · 18 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 199</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  
+    <article class="course-card">
+      <div class="course-cover" style="background:#a855f7"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#faf5ff;color:#a855f7">AI Coding</span>
+        <h3 class="course-name">AI 辅助编程实战营</h3>
+        <p class="course-meta">讲师：张磊 · 16 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 399</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  
+    <article class="course-card">
+      <div class="course-cover" style="background:#f59e0b"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#fffbeb;color:#d97706">前端</span>
+        <h3 class="course-name">TypeScript 类型体操进阶</h3>
+        <p class="course-meta">讲师：陈静 · 20 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 249</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  
+    <article class="course-card">
+      <div class="course-cover" style="background:#f87171"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#fef2f2;color:#ef4444">AI Coding</span>
+        <h3 class="course-name">Prompt 工程与 LLM 应用开发</h3>
+        <p class="course-meta">讲师：赵强 · 14 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 349</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  
+    <article class="course-card">
+      <div class="course-cover" style="background:#9ca3af"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="course-body">
+        <span class="course-tag" style="background:#f9fafb;color:#6b7280">前端</span>
+        <h3 class="course-name">Vite 构建工具深度剖析</h3>
+        <p class="course-meta">讲师：刘洋 · 12 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> 159</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  </div>
+  </section>
+
+  <!-- ============ 四、我的学习记录 ============ -->
+  <section class="card-panel" aria-labelledby="recordTitle">
+    <div class="section-header">
+      <h2 class="section-title" id="recordTitle">我的学习记录</h2>
+      <p class="section-desc">坚持学习，持续进步</p>
+    </div>
+    <div class="table-wrapper">
+      <table class="record-table">
+        <thead>
+          <tr>
+            <th scope="col">序号</th>
+            <th scope="col">课程名称</th>
+            <th scope="col">当前章节</th>
+            <th scope="col" style="width:200px">学习进度</th>
+            <th scope="col">状态</th>
+            <th scope="col">操作</th>
+          </tr>
+        </thead>
+        <tbody id="recordBody">
+      <tr>
+        <td>1</td>
+        <td>Vue3 组件库设计与实现</td>
+        <td>第 8 章：表单组件封装</td>
+        <td>
+          <div class="progress-cell">
+            <div class="progress-track" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Vue3 组件库设计与实现 学习进度 65%">
+              <div class="progress-fill fill-blue" style="width:65%">65%</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-tag status-learning">学习中</span></td>
+        <td><a href="#" class="continue-link" onclick="return false;">继续学习</a></td>
+      </tr>
+    
+      <tr>
+        <td>2</td>
+        <td>React 18 并发渲染原理</td>
+        <td>第 5 章：Suspense 与并发模式</td>
+        <td>
+          <div class="progress-cell">
+            <div class="progress-track" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100" aria-label="React 18 并发渲染原理 学习进度 42%">
+              <div class="progress-fill fill-orange" style="width:42%">42%</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-tag status-learning">学习中</span></td>
+        <td><a href="#" class="continue-link" onclick="return false;">继续学习</a></td>
+      </tr>
+    
+      <tr>
+        <td>3</td>
+        <td>AI 辅助编程实战营</td>
+        <td>第 11 章：AI 代码评审</td>
+        <td>
+          <div class="progress-cell">
+            <div class="progress-track" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="AI 辅助编程实战营 学习进度 100%">
+              <div class="progress-fill fill-green" style="width:100%">100%</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-tag status-done">已完成</span></td>
+        <td><a href="#" class="continue-link" onclick="return false;">继续学习</a></td>
+      </tr>
+    
+      <tr>
+        <td>4</td>
+        <td>TypeScript 类型体操进阶</td>
+        <td>第 2 章：条件类型</td>
+        <td>
+          <div class="progress-cell">
+            <div class="progress-track" role="progressbar" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" aria-label="TypeScript 类型体操进阶 学习进度 18%">
+              <div class="progress-fill fill-orange" style="width:18%">18%</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-tag status-learning">学习中</span></td>
+        <td><a href="#" class="continue-link" onclick="return false;">继续学习</a></td>
+      </tr>
+    </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 五、帮助中心（手风琴） ============ -->
+  <section class="card-panel" aria-labelledby="helpTitle">
+    <div class="section-header">
+      <h2 class="section-title" id="helpTitle">帮助中心</h2>
+      <p class="section-desc">常见问题，快速解答</p>
+    </div>
+    <div id="accordion">
+    <div class="accordion-item" data-index="0">
+      <button class="accordion-header" type="button" aria-expanded="false" aria-controls="faq-panel-0" id="faq-btn-0">
+        <span>如何申请课程退款？</span>
+        <svg class="accordion-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="accordion-body" id="faq-panel-0" role="region" aria-labelledby="faq-btn-0">
+        <div class="accordion-content">购买课程 7 天内且学习进度不超过 30%，可在「我的订单」页面申请全额退款，款项将在 3 个工作日内原路退回。</div>
+      </div>
+    </div>
+  
+    <div class="accordion-item" data-index="1">
+      <button class="accordion-header" type="button" aria-expanded="false" aria-controls="faq-panel-1" id="faq-btn-1">
+        <span>课程证书如何获取？</span>
+        <svg class="accordion-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="accordion-body" id="faq-panel-1" role="region" aria-labelledby="faq-btn-1">
+        <div class="accordion-content">课程学习进度达到 100% 后，可在「我的证书」页面免费下载电子版结业证书，支持扫码验证真伪。</div>
+      </div>
+    </div>
+  
+    <div class="accordion-item" data-index="2">
+      <button class="accordion-header" type="button" aria-expanded="false" aria-controls="faq-panel-2" id="faq-btn-2">
+        <span>课程有效期是多久？</span>
+        <svg class="accordion-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="accordion-body" id="faq-panel-2" role="region" aria-labelledby="faq-btn-2">
+        <div class="accordion-content">自购买之日起 2 年内可不限次数观看全部课程内容，过期后可联系客服申请续期。</div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+</main>
+
+<!-- ============ 六、页脚 ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="footer-text">© 2026 智学云课堂 · 仅用于教学示范</span>
+    <button class="feedback-btn" id="feedbackBtn" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      意见反馈
+    </button>
+  </div>
+</footer>
+
+<script>
+/* =====================================================
+ * 数据层：全部内容由数据驱动渲染，便于扩展
+ * ===================================================== */
+
+// 课程数据（cover 为封面纯色，tagBg/tagColor 为标签浅底色/文字色）
+const courses = [
+  { name: 'Vue3 组件库设计与实现',    category: '前端',      teacher: '李伟', lessons: 24, price: 299, cover: '#3b82f6', tagBg: '#eff6ff', tagColor: '#3b82f6' },
+  { name: 'React 18 并发渲染原理',    category: '前端',      teacher: '王芳', lessons: 18, price: 199, cover: '#84cc16', tagBg: '#f7fee7', tagColor: '#65a30d' },
+  { name: 'AI 辅助编程实战营',        category: 'AI Coding', teacher: '张磊', lessons: 16, price: 399, cover: '#a855f7', tagBg: '#faf5ff', tagColor: '#a855f7' },
+  { name: 'TypeScript 类型体操进阶',  category: '前端',      teacher: '陈静', lessons: 20, price: 249, cover: '#f59e0b', tagBg: '#fffbeb', tagColor: '#d97706' },
+  { name: 'Prompt 工程与 LLM 应用开发', category: 'AI Coding', teacher: '赵强', lessons: 14, price: 349, cover: '#f87171', tagBg: '#fef2f2', tagColor: '#ef4444' },
+  { name: 'Vite 构建工具深度剖析',    category: '前端',      teacher: '刘洋', lessons: 12, price: 159, cover: '#9ca3af', tagBg: '#f9fafb', tagColor: '#6b7280' }
+];
+
+// 学习记录数据
+const records = [
+  { name: 'Vue3 组件库设计与实现',   chapter: '第 8 章：表单组件封装',        progress: 65,  status: '学习中' },
+  { name: 'React 18 并发渲染原理',   chapter: '第 5 章：Suspense 与并发模式', progress: 42,  status: '学习中' },
+  { name: 'AI 辅助编程实战营',       chapter: '第 11 章：AI 代码评审',        progress: 100, status: '已完成' },
+  { name: 'TypeScript 类型体操进阶', chapter: '第 2 章：条件类型',            progress: 18,  status: '学习中' }
+];
+
+// 帮助中心问答数据
+const faqs = [
+  { q: '如何申请课程退款？', a: '购买课程 7 天内且学习进度不超过 30%，可在「我的订单」页面申请全额退款，款项将在 3 个工作日内原路退回。' },
+  { q: '课程证书如何获取？', a: '课程学习进度达到 100% 后，可在「我的证书」页面免费下载电子版结业证书，支持扫码验证真伪。' },
+  { q: '课程有效期是多久？', a: '自购买之日起 2 年内可不限次数观看全部课程内容，过期后可联系客服申请续期。' }
+];
+
+/* =====================================================
+ * 二、轮播 Banner：自动播放 4s + 箭头 + 指示器 + 悬停暂停
+ * ===================================================== */
+(function initCarousel() {
+  const track = document.getElementById('carouselTrack');
+  const dotsBox = document.getElementById('carouselDots');
+  const total = track.children.length;
+  let current = 0;
+  let timer = null;
+
+  // 渲染指示器
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', '切换到第 ' + (i + 1) + ' 张');
+    dot.addEventListener('click', () => { goTo(i); restart(); });
+    dotsBox.appendChild(dot);
+  }
+  const dots = dotsBox.children;
+
+  function goTo(index) {
+    current = (index + total) % total;
+    track.style.transform = 'translateX(-' + current * 100 + '%)';
+    for (let i = 0; i < total; i++) dots[i].classList.toggle('active', i === current);
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  function restart() { stop(); start(); }
+  function start() { timer = setInterval(next, 4000); }
+  function stop() { clearInterval(timer); }
+
+  document.getElementById('nextBtn').addEventListener('click', () => { next(); restart(); });
+  document.getElementById('prevBtn').addEventListener('click', () => { prev(); restart(); });
+
+  // 鼠标悬停暂停，移出恢复
+  const carousel = document.getElementById('carousel');
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+
+  start();
+})();
+
+/* =====================================================
+ * 三、精选课程：卡片渲染 + 分类 Tab + 搜索过滤
+ * ===================================================== */
+const courseGrid = document.getElementById('courseGrid');
+let activeCategory = '全部';
+let keyword = '';
+
+// 打开的书本 SVG（封面图标）
+const bookSvg = '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>'
+  + '<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>';
+
+function renderCourses() {
+  const kw = keyword.trim().toLowerCase();
+  // 同时按分类 Tab 和搜索关键词过滤（匹配课程名/讲师/分类）
+  const list = courses.filter(c => {
+    const matchCategory = activeCategory === '全部' || c.category === activeCategory;
+    const matchKeyword = !kw || c.name.toLowerCase().includes(kw)
+      || c.teacher.toLowerCase().includes(kw)
+      || c.category.toLowerCase().includes(kw);
+    return matchCategory && matchKeyword;
+  });
+
+  if (list.length === 0) {
+    courseGrid.innerHTML = '<div class="empty-state">😢 没有找到相关课程，换个关键词试试吧～</div>';
+    return;
+  }
+
+  courseGrid.innerHTML = list.map(c => `
+    <article class="course-card">
+      <div class="course-cover" style="background:${c.cover}">${bookSvg}</div>
+      <div class="course-body">
+        <span class="course-tag" style="background:${c.tagBg};color:${c.tagColor}">${c.category}</span>
+        <h3 class="course-name">${c.name}</h3>
+        <p class="course-meta">讲师：${c.teacher} · ${c.lessons} 课时</p>
+        <div class="course-footer">
+          <span class="course-price"><span class="yen">¥</span> ${c.price}</span>
+          <button class="learn-btn" type="button">立即学习</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+// 分类 Tab 切换
+document.getElementById('tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b === btn);
+    b.setAttribute('aria-selected', b === btn);
+  });
+  activeCategory = btn.dataset.category;
+  renderCourses();
+});
+
+// 搜索：按钮点击 + 回车 + 输入实时过滤
+const searchInput = document.getElementById('searchInput');
+function doSearch() { keyword = searchInput.value; renderCourses(); }
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+searchInput.addEventListener('input', doSearch);
+
+renderCourses();
+
+/* =====================================================
+ * 四、学习记录表格：JS 渲染，进度条颜色按规则分配
+ * ===================================================== */
+(function renderRecords() {
+  const tbody = document.getElementById('recordBody');
+  tbody.innerHTML = records.map((r, i) => {
+    // 进度条配色：100% 绿、65% 蓝、其余橙
+    let fillClass = 'fill-orange';
+    if (r.progress === 100) fillClass = 'fill-green';
+    else if (r.progress >= 60) fillClass = 'fill-blue';
+
+    const statusClass = r.status === '已完成' ? 'status-done' : 'status-learning';
+
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.name}</td>
+        <td>${r.chapter}</td>
+        <td>
+          <div class="progress-cell">
+            <div class="progress-track" role="progressbar" aria-valuenow="${r.progress}" aria-valuemin="0" aria-valuemax="100" aria-label="${r.name} 学习进度 ${r.progress}%">
+              <div class="progress-fill ${fillClass}" style="width:${r.progress}%">${r.progress}%</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="status-tag ${statusClass}">${r.status}</span></td>
+        <td><a href="#" class="continue-link" onclick="return false;">继续学习</a></td>
+      </tr>
+    `;
+  }).join('');
+})();
+
+/* =====================================================
+ * 五、帮助中心手风琴：同时只展开一项，箭头旋转
+ * ===================================================== */
+(function renderAccordion() {
+  const box = document.getElementById('accordion');
+  box.innerHTML = faqs.map((f, i) => `
+    <div class="accordion-item" data-index="${i}">
+      <button class="accordion-header" type="button" aria-expanded="false" aria-controls="faq-panel-${i}" id="faq-btn-${i}">
+        <span>${f.q}</span>
+        <svg class="accordion-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="accordion-body" id="faq-panel-${i}" role="region" aria-labelledby="faq-btn-${i}">
+        <div class="accordion-content">${f.a}</div>
+      </div>
+    </div>
+  `).join('');
+
+  box.addEventListener('click', e => {
+    const header = e.target.closest('.accordion-header');
+    if (!header) return;
+    const item = header.parentElement;
+    const isOpen = item.classList.contains('open');
+
+    // 先关闭所有项（保证同时只展开一项）
+    box.querySelectorAll('.accordion-item').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+      el.querySelector('.accordion-body').style.maxHeight = null;
+    });
+
+    // 若原本未展开，则展开当前项
+    if (!isOpen) {
+      item.classList.add('open');
+      header.setAttribute('aria-expanded', 'true');
+      const body = item.querySelector('.accordion-body');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  });
+})();
+
+/* =====================================================
+ * 六、页脚：意见反馈
+ * ===================================================== */
+document.getElementById('feedbackBtn').addEventListener('click', () => {
+  alert('感谢您的反馈！我们会尽快处理～');
+});
+</script>
+
+
+
+<div data-trae-edit-ui="true" class="trae-image-download-btn" title="Download image" style="position: fixed; display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: var(--trae-bg-menu, #222427); border: 1px solid var(--trae-border-l2, rgba(255,255,255,0.12)); box-shadow: var(--trae-floating-shadow, 0px 2px 8px 0px rgba(0,0,0,0.2)); color: var(--trae-icon-default, #f5f9fe); cursor: pointer; z-index: 89990; transition: background 0.15s; pointer-events: auto;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2v8m0 0L5 7m3 3l3-3M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div></body></html>
